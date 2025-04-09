@@ -1,4 +1,4 @@
-# PCR交互式教学系统
+# PCR技术交互教学系统
 
 这是一个基于Web的PCR（聚合酶链式反应）交互式教学工具，帮助学生和教师直观理解PCR过程中的各个关键步骤。
 
@@ -74,7 +74,7 @@
 
 ## 在线演示
 
-访问[PCR交互式教学系统](https://yourusername.github.io/pcr-teaching-tool/)在线体验这个工具。
+访问[PCR交互式教学系统](https://chenmiao97.github.io/PCR_teaching/)在线体验这个工具。
 
 ## 视觉元素说明
 
@@ -94,9 +94,9 @@
 4. 推送到您的分支 (`git push origin feature/amazing-feature`)
 5. 创建Pull Request请求合并
 
-## 开源许可
+## 版权所有
 
-本项目采用 [MIT 许可证](LICENSE)。
+版权所有，任何修改、使用请联系作者获得许可
 
 ## 联系方式
 
