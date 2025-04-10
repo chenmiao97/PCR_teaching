@@ -56,7 +56,7 @@
 
 1. 克隆代码仓库：
    ```bash
-   git clone https://github.com/yourusername/pcr-teaching-tool.git
+   git clone https://github.com/chenmiao97/PCR_teaching.git
    ```
 
 2. 进入项目文件夹：
@@ -74,7 +74,7 @@
 
 ## 在线演示
 
-访问[PCR交互式教学系统](https://yourusername.github.io/pcr-teaching-tool/)在线体验这个工具。
+访问[PCR交互式教学系统](https://chenmiao97.github.io/PCR_teaching/)在线体验这个工具。
 
 ## 视觉元素说明
 
@@ -97,6 +97,6 @@
 ## 联系方式
 本项目由上海华政附高生物教师陈淼开发，仅供教育目的使用，欢迎教师、学生和生物学爱好者使用与改进。
 
-如有问题或建议，请[创建issue](https://github.com/yourusername/pcr-teaching-tool/issues)或直接联系项目维护者。
+如有问题或建议，请[创建issue](https://github.com/chenmiao97/PCR_teaching/issues)或直接联系项目维护者。
 
 ---
