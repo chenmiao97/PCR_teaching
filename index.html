@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCR交互系统</title>
+    <title>PCR技术教学交互系统</title>
     <style>
         body {
             margin: 0;
@@ -289,10 +289,30 @@
             box-shadow: 1px 1px 2px #bebebe,
                        -1px -1px 2px #ffffff;
         }
+        
+        #cycleCounter {
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            font-size: 30px;
+            font-weight: bold;
+            color: red;
+            z-index: 100;
+        }
+        
+        #copyright {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 12px;
+            color: black;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-    <div class="title">PCR教学交互系统</div>
+    <div class="title">PCR技术教学交互系统</div>
+    <div id="cycleCounter">循环 1</div>
     <div class="top-buttons">
         <div class="temperature-inputs top-left-temp">
             <div class="temperature-input">
@@ -337,16 +357,19 @@
             <button class="process-button extend-btn" id="extendBtn">延伸</button>
         </div>
         <div class="center-buttons">
-            <button class="control-button cycle-btn" id="cycleBtn">循环次数</button>
+            <button class="control-button cycle-btn" id="cycleBtn">下一循环</button>
             <button class="control-button reset-btn" id="resetBtn">重置</button>
         </div>
     </div>
+    <div id="copyright">@华政附高 版权所有 仅供教学使用</div>
 
     <script src="dna.js"></script>
     <script>
         // 在全局作用域中声明引物变量
         window.primer1 = '';
         window.primer2 = '';
+        // 添加循环计数变量
+        let cycleCount = 1;
 
         // 引物对话框控制
         const primer1Btn = document.getElementById('primer1Btn');
@@ -390,7 +413,8 @@
             
             // 保存引物序列到全局变量
             if (primerNumber === 1) {
-                window.primer1 = sequence;
+                // 对primer1的序列进行左右反转后再存储，不显示提示
+                window.primer1 = sequence.split('').reverse().join('');
                 alert(`引物1序列已保存：${sequence}`);
             } else {
                 window.primer2 = sequence;
@@ -401,6 +425,23 @@
             input.value = '';
             document.getElementById(`primer${primerNumber}Dialog`).style.display = 'none';
         }
+        
+        // 添加循环计数按钮处理函数
+        document.getElementById('cycleBtn').addEventListener('click', () => {
+            if (cycleCount < 3) {
+                cycleCount++;
+                document.getElementById('cycleCounter').textContent = `循环 ${cycleCount}`;
+            } else {
+                alert('PCR实验已完成全部3个循环！');
+            }
+        });
+        
+        // 添加重置按钮处理，重置循环计数
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // 重置循环计数
+            cycleCount = 1;
+            document.getElementById('cycleCounter').textContent = `循环 ${cycleCount}`;
+        });
     </script>
 </body>
 </html> 

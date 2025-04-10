@@ -808,6 +808,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const extendBtn = document.getElementById('extendBtn');
     const resetBtn = document.getElementById('resetBtn'); // 获取重置按钮
 
+    // 确保页面加载时清空温度输入框
+    if (denatureTemp) denatureTemp.value = '';
+    if (annealTemp) annealTemp.value = '';
+    if (extendTemp) extendTemp.value = '';
+
     // 跟踪温度设置状态
     let temperaturesSet = false;
     
@@ -838,15 +843,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 验证温度设置
         if (denatureTempValue < 94 || denatureTempValue > 96) {
-            alert('变性温度必须在94°C到96°C之间');
+            alert('请输入合适的变性温度！');
             return;
         }
         if (annealTempValue < 55 || annealTempValue > 68) {
-            alert('退火温度必须在55°C到68°C之间');
+            alert('请输入合适的退火温度！');
             return;
         }
         if (extendTempValue < 72 || extendTempValue > 78) {
-            alert('延伸温度必须在72°C到78°C之间');
+            alert('请输入合适的延伸温度！');
             return;
         }
 
@@ -890,9 +895,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 检查引物1是否匹配上链（从左到右）
+        // 检查引物1是否匹配上链（从右到左）
         const topStrand = dna.dnaSequence.map(base => base.topBase).join('');
-        dna.primer1Position = dna.checkPrimerMatch(window.primer1, topStrand);
+        dna.primer1Position = dna.checkPrimerMatchReverse(window.primer1, topStrand);
         
         if (dna.primer1Position === -1) {
             alert('引物1无法与DNA上链匹配！');
