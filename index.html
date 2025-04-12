@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCR技术教学交互系统</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            color: black;
+            padding: 15px 0;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-buttons {
+            padding: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .base-buttons {
+            position: absolute;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .base-button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .base-A { background-color: #FF6B6B; }
+        .base-T { background-color: #4ECDC4; }
+        .base-C { background-color: #45B7D1; }
+        .base-G { background-color: #96CEB4; }
+        .polymerase {
+            position: absolute;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background-color: #FFA500;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            color: black;
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            padding: 10px;
+            line-height: 1.2;
+        }
+        .primer-dialog {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: none;
+            width: 300px;
+        }
+        .primer-dialog h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 16px;
+        }
+        .primer-dialog p {
+            margin: 10px 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .primer-dialog input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .primer-dialog button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        canvas {
+            flex: 1;
+            background-color: white;
+        }
+        .bottom-buttons {
+            padding: 15px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            background-color: #e8e8e8;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            height: 60px;
+        }
+        
+        .left-buttons {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px;
+        }
+        
+        .center-buttons {
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .process-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .denature-btn {
+            background: linear-gradient(145deg, #ff5c5c, #e55151);
+            box-shadow: 0 4px 8px rgba(255, 92, 92, 0.3);
+        }
+        
+        .denature-btn:hover {
+            background: linear-gradient(145deg, #ff7070, #ff5c5c);
+            transform: translateY(-2px);
+        }
+        
+        .anneal-btn {
+            background: linear-gradient(145deg, #4d94ff, #3a7bd5);
+            box-shadow: 0 4px 8px rgba(77, 148, 255, 0.3);
+        }
+        
+        .anneal-btn:hover {
+            background: linear-gradient(145deg, #5ca0ff, #4d94ff);
+            transform: translateY(-2px);
+        }
+        
+        .extend-btn {
+            background: linear-gradient(145deg, #5cb85c, #4cae4c);
+            box-shadow: 0 4px 8px rgba(92, 184, 92, 0.3);
+        }
+        
+        .extend-btn:hover {
+            background: linear-gradient(145deg, #6ec06e, #5cb85c);
+            transform: translateY(-2px);
+        }
+        
+        .control-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cycle-btn {
+            background: linear-gradient(145deg, #9c27b0, #8e24aa);
+            color: white;
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+        
+        .cycle-btn:hover {
+            background: linear-gradient(145deg, #ab47bc, #9c27b0);
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(145deg, #607d8b, #546e7a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 125, 139, 0.3);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(145deg, #78909c, #607d8b);
+            transform: translateY(-2px);
+        }
+        
+        .process-button:active, .control-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .temperature-inputs {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        .temperature-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .temperature-input label {
+            width: 120px;
+            font-size: 14px;
+            color: #333;
+        }
+        .temperature-input input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .start-button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: linear-gradient(145deg, #4a90e2, #357abd);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .start-button:hover {
+            background: linear-gradient(145deg, #357abd, #4a90e2);
+        }
+        .top-left-temp {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            bottom: auto;
+        }
+        #primer1Btn, #primer2Btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            box-shadow: 3px 3px 6px #bebebe,
+                       -3px -3px 6px #ffffff;
+            color: #333;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        #primer1Btn:hover, #primer2Btn:hover {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+            transform: translateY(-2px);
+        }
+
+        #primer1Btn:active, #primer2Btn:active {
+            transform: translateY(1px);
+            box-shadow: 1px 1px 2px #bebebe,
+                       -1px -1px 2px #ffffff;
+        }
+        
+        #cycleCounter {
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            font-size: 30px;
+            font-weight: bold;
+            color: red;
+            z-index: 100;
+        }
+        
+        #copyright {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 12px;
+            color: black;
+            z-index: 100;
+            text-align: right;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">PCR技术教学交互系统</div>
+    <div id="cycleCounter">循环 1</div>
+    <div class="top-buttons">
+        <div class="temperature-inputs top-left-temp">
+            <div class="temperature-input">
+                <label>变性温度 (°C):</label>
+                <input type="number" id="denatureTemp" min="0" max="100" step="1" value="95">
+            </div>
+            <div class="temperature-input">
+                <label>退火温度 (°C):</label>
+                <input type="number" id="annealTemp" min="0" max="100" step="1" value="60">
+            </div>
+            <div class="temperature-input">
+                <label>延伸温度 (°C):</label>
+                <input type="number" id="extendTemp" min="0" max="100" step="1" value="72">
+            </div>
+            <button class="start-button" id="startProcessBtn">提交温度设定</button>
+        </div>
+        <div style="position: relative;">
+            <button id="primer1Btn">引物1设计</button>
+            <div class="primer-dialog" id="primer1Dialog">
+                <h3>引物1设计</h3>
+                <p>请根据目的基因序列设计上游引物：</p>
+                <input type="text" placeholder="输入引物1序列（5'→3'）" id="primer1Input">
+                <button onclick="submitPrimer(1)">确认</button>
+            </div>
+        </div>
+        <div style="position: relative;">
+            <button id="primer2Btn">引物2设计</button>
+            <div class="primer-dialog" id="primer2Dialog">
+                <h3>引物2设计</h3>
+                <p>请根据目的基因序列设计下游引物：</p>
+                <input type="text" placeholder="输入引物2序列（5'→3'）" id="primer2Input">
+                <button onclick="submitPrimer(2)">确认</button>
+            </div>
+        </div>
+        <div class="polymerase">DNA聚合酶</div>
+    </div>
+    <canvas id="dnaCanvas"></canvas>
+    <div class="bottom-buttons">
+        <div class="left-buttons">
+            <button class="process-button denature-btn" id="denatureBtn">变性</button>
+            <button class="process-button anneal-btn" id="annealBtn">退火</button>
+            <button class="process-button extend-btn" id="extendBtn">延伸</button>
+        </div>
+        <div class="center-buttons">
+            <button class="control-button cycle-btn" id="cycleBtn">下一循环</button>
+            <button class="control-button reset-btn" id="resetBtn">重置</button>
+        </div>
+    </div>
+    <div id="copyright">开发者：chenmiao_sjtu@163.com<br>持续优化中，感谢您的教学实践反馈</div>
+
+    <script src="dna.js"></script>
+    <script>
+        // 在全局作用域中声明引物变量
+        window.primer1 = '';
+        window.primer2 = '';
+        // 添加循环计数变量
+        let cycleCount = 1;
+        
+        // 创建全局DNA实例变量，以便所有函数都可以访问
+        window.dnaInstance = null;
+
+        // 引物对话框控制
+        const primer1Btn = document.getElementById('primer1Btn');
+        const primer2Btn = document.getElementById('primer2Btn');
+        const primer1Dialog = document.getElementById('primer1Dialog');
+        const primer2Dialog = document.getElementById('primer2Dialog');
+        
+        primer1Btn.addEventListener('click', () => {
+            primer1Dialog.style.display = primer1Dialog.style.display === 'block' ? 'none' : 'block';
+            primer2Dialog.style.display = 'none';
+        });
+
+        primer2Btn.addEventListener('click', () => {
+            primer2Dialog.style.display = primer2Dialog.style.display === 'block' ? 'none' : 'block';
+            primer1Dialog.style.display = 'none';
+        });
+
+        // 点击页面其他地方关闭对话框
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.primer-dialog') && !e.target.closest('#primer1Btn') && !e.target.closest('#primer2Btn')) {
+                primer1Dialog.style.display = 'none';
+                primer2Dialog.style.display = 'none';
+            }
+        });
+
+        function submitPrimer(primerNumber) {
+            const input = document.getElementById(`primer${primerNumber}Input`);
+            const sequence = input.value.toUpperCase();
+            
+            // 验证序列长度
+            if (sequence.length !== 4) {
+                alert('请输入4个碱基组成的引物！');
+                return;
+            }
+            
+            // 验证序列是否只包含ATCG
+            if (!/^[ATCG]+$/.test(sequence)) {
+                alert('引物序列只能包含A、T、C、G四种碱基！');
+                return;
+            }
+            
+            // 保存引物序列到全局变量
+            if (primerNumber === 1) {
+                // 对primer1的序列进行左右反转后再存储，不显示提示
+                window.primer1 = sequence.split('').reverse().join('');
+                alert(`引物1序列已保存：${sequence}`);
+            } else {
+                window.primer2 = sequence;
+                alert(`引物2序列已保存：${sequence}`);
+            }
+            
+            // 清空输入框并关闭对话框
+            input.value = '';
+            document.getElementById(`primer${primerNumber}Dialog`).style.display = 'none';
+        }
+        
+        // 添加循环计数按钮处理函数
+        document.getElementById('cycleBtn').addEventListener('click', () => {
+            // 方法1：通过全局dnaInstance检查延伸状态
+            if (window.dnaInstance && window.dnaInstance.isExtending && window.dnaInstance.extensionProgress >= 1) {
+                // 获取DNA序列数据
+                const dnaSequence = window.dnaInstance.dnaSequence;
+                // 序列化并编码DNA序列数据
+                const encodedDnaSequence = encodeURIComponent(JSON.stringify(dnaSequence));
+                // 日志记录引物位置
+                console.log("引物位置参数:", {
+                    primer1Position: window.dnaInstance.primer1Position,
+                    primer2Position: window.dnaInstance.primer2Position
+                });
+                // 将引物数据和DNA序列传递给循环2页面
+                window.location.href = `cycle2.html?primer1=${encodeURIComponent(window.primer1)}&primer2=${encodeURIComponent(window.primer2)}&dnaSequence=${encodedDnaSequence}&primer1Pos=${window.dnaInstance.primer1Position}&primer2Pos=${window.dnaInstance.primer2Position}&denatureTemp=${document.getElementById('denatureTemp').value}&annealTemp=${document.getElementById('annealTemp').value}&extendTemp=${document.getElementById('extendTemp').value}`;
+                return;
+            }
+            
+            // 方法2：通过canvas元素存储的DNA实例检查
+            const dnaCanvas = document.getElementById('dnaCanvas');
+            if (dnaCanvas && dnaCanvas.__dna__ && dnaCanvas.__dna__.isExtending && dnaCanvas.__dna__.extensionProgress >= 1) {
+                // 获取DNA序列数据
+                const dnaSequence = dnaCanvas.__dna__.dnaSequence;
+                // 序列化并编码DNA序列数据
+                const encodedDnaSequence = encodeURIComponent(JSON.stringify(dnaSequence));
+                // 日志记录引物位置
+                console.log("引物位置参数(canvas):", {
+                    primer1Position: dnaCanvas.__dna__.primer1Position,
+                    primer2Position: dnaCanvas.__dna__.primer2Position
+                });
+                // 将引物数据和DNA序列传递给循环2页面
+                window.location.href = `cycle2.html?primer1=${encodeURIComponent(window.primer1)}&primer2=${encodeURIComponent(window.primer2)}&dnaSequence=${encodedDnaSequence}&primer1Pos=${dnaCanvas.__dna__.primer1Position}&primer2Pos=${dnaCanvas.__dna__.primer2Position}&denatureTemp=${document.getElementById('denatureTemp').value}&annealTemp=${document.getElementById('annealTemp').value}&extendTemp=${document.getElementById('extendTemp').value}`;
+                return;
+            }
+            
+            // 方法3：通过步骤完成状态检查
+            if (stepsCompleted && stepsCompleted.extend) {
+                // 尝试从各种来源获取DNA实例
+                let dnaInstance = window.dnaInstance || (dnaCanvas && dnaCanvas.__dna__);
+                if (dnaInstance) {
+                    // 获取DNA序列数据
+                    const dnaSequence = dnaInstance.dnaSequence;
+                    // 序列化并编码DNA序列数据
+                    const encodedDnaSequence = encodeURIComponent(JSON.stringify(dnaSequence));
+                    // 将引物数据和DNA序列传递给循环2页面
+                    window.location.href = `cycle2.html?primer1=${encodeURIComponent(window.primer1)}&primer2=${encodeURIComponent(window.primer2)}&dnaSequence=${encodedDnaSequence}&primer1Pos=${dnaInstance.primer1Position}&primer2Pos=${dnaInstance.primer2Position}&denatureTemp=${document.getElementById('denatureTemp').value}&annealTemp=${document.getElementById('annealTemp').value}&extendTemp=${document.getElementById('extendTemp').value}`;
+                } else {
+                    // 如果无法获取DNA序列数据，则只传递引物数据
+                    window.location.href = `cycle2.html?primer1=${encodeURIComponent(window.primer1)}&primer2=${encodeURIComponent(window.primer2)}&denatureTemp=${document.getElementById('denatureTemp').value}&annealTemp=${document.getElementById('annealTemp').value}&extendTemp=${document.getElementById('extendTemp').value}`;
+                }
+                return;
+            }
+            
+            // 如果所有方法都失败，显示提示
+            alert('请先完成变性、退火和延伸步骤');
+        });
+        
+        // 添加重置按钮处理，重置循环计数
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // 重置循环计数
+            cycleCount = 1;
+            // 其他重置逻辑保持不变...
+        });
+    </script>
+</body>
+</html> 

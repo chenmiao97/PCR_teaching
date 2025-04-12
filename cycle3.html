@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCR技术教学交互系统 - 循环3</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            color: black;
+            padding: 15px 0;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-buttons {
+            padding: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        canvas {
+            flex: 1;
+            background-color: white;
+        }
+        .bottom-buttons {
+            padding: 15px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            background-color: #e8e8e8;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            height: 60px;
+        }
+        
+        .left-buttons {
+            display: flex;
+            gap: 15px;
+            margin-left: 20px;
+        }
+        
+        .center-buttons {
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .process-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .denature-btn {
+            background: linear-gradient(145deg, #ff5c5c, #e55151);
+            box-shadow: 0 4px 8px rgba(255, 92, 92, 0.3);
+        }
+        
+        .denature-btn:hover {
+            background: linear-gradient(145deg, #ff7070, #ff5c5c);
+            transform: translateY(-2px);
+        }
+        
+        .anneal-btn {
+            background: linear-gradient(145deg, #4d94ff, #3a7bd5);
+            box-shadow: 0 4px 8px rgba(77, 148, 255, 0.3);
+        }
+        
+        .anneal-btn:hover {
+            background: linear-gradient(145deg, #5ca0ff, #4d94ff);
+            transform: translateY(-2px);
+        }
+        
+        .extend-btn {
+            background: linear-gradient(145deg, #5cb85c, #4cae4c);
+            box-shadow: 0 4px 8px rgba(92, 184, 92, 0.3);
+        }
+        
+        .extend-btn:hover {
+            background: linear-gradient(145deg, #6ec06e, #5cb85c);
+            transform: translateY(-2px);
+        }
+        
+        .control-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cycle-btn {
+            background: linear-gradient(145deg, #9c27b0, #8e24aa);
+            color: white;
+            box-shadow: 0 4px 12px rgba(156, 39, 176, 0.3);
+        }
+        
+        .cycle-btn:hover {
+            background: linear-gradient(145deg, #ab47bc, #9c27b0);
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(145deg, #607d8b, #546e7a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 125, 139, 0.3);
+        }
+        
+        .reset-btn:hover {
+            background: linear-gradient(145deg, #78909c, #607d8b);
+            transform: translateY(-2px);
+        }
+        
+        .process-button:active, .control-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        #cycleCounter {
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            font-size: 30px;
+            font-weight: bold;
+            color: red;
+            z-index: 100;
+        }
+        
+        #copyright {
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 12px;
+            color: black;
+            z-index: 100;
+            text-align: right;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">PCR技术教学交互系统</div>
+    <div id="cycleCounter">循环 3</div>
+    <div class="top-buttons">
+        <!-- 空的顶部区域，不包含引物设计和温度设置 -->
+    </div>
+    <canvas id="dnaCanvas"></canvas>
+    <div class="bottom-buttons">
+        <div class="left-buttons">
+            <button class="process-button denature-btn" id="denatureBtn">变性 (95°C)</button>
+            <button class="process-button anneal-btn" id="annealBtn">退火 (60°C)</button>
+            <button class="process-button extend-btn" id="extendBtn">延伸 (72°C)</button>
+        </div>
+        <div class="center-buttons">
+            <button class="control-button cycle-btn" id="cycleBtn">下一循环</button>
+            <button class="control-button reset-btn" id="resetBtn">重置</button>
+        </div>
+    </div>
+    <div id="copyright">开发者：chenmiao_sjtu@163.com<br>持续优化中，感谢您的教学实践反馈</div>
+
+    <script src="dna.js"></script>
+    <script src="cycle3.js"></script>
+</body>
+</html> 
