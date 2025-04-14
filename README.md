@@ -3,6 +3,11 @@
 ## 系统介绍
 这是一个用于教学PCR（聚合酶链式反应）技术的交互式Web应用程序。系统通过可视化方式展示PCR过程中的三个关键步骤：变性、退火和延伸，帮助学生更好地理解PCR技术的原理和过程。
 
+## 在线访问
+
+你可以通过以下链接直接访问应用：
+[https://chenmiao97.github.io/PCR_teaching/](https://chenmiao97.github.io/PCR_teaching/)
+
 ## 主要功能
 1. **DNA序列可视化**
    - 显示DNA双链结构
