@@ -634,7 +634,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.ctx.fillStyle = 'black';
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-                this.ctx.fillText('DNA聚合酶', currentLeftX, polymeraseY1);
+                this.ctx.fillText('耐热', currentLeftX, polymeraseY1 - 10);
+                this.ctx.fillText('DNA聚合酶', currentLeftX, polymeraseY1 + 10);
                 
                 // 第2个DNA聚合酶 - 在第3条链边移动
                 const gradient2 = this.ctx.createRadialGradient(
@@ -655,7 +656,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 this.ctx.font = 'bold 16px Arial';
                 this.ctx.fillStyle = 'black';
-                this.ctx.fillText('DNA聚合酶', currentLeftX, polymeraseY2);
+                this.ctx.fillText('耐热', currentLeftX, polymeraseY2 - 10);
+                this.ctx.fillText('DNA聚合酶', currentLeftX, polymeraseY2 + 10);
                 
                 // 第3个DNA聚合酶 - 在第2条链边移动
                 const gradient3 = this.ctx.createRadialGradient(
@@ -676,7 +678,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 this.ctx.font = 'bold 16px Arial';
                 this.ctx.fillStyle = 'black';
-                this.ctx.fillText('DNA聚合酶', currentRightX, polymeraseY3);
+                this.ctx.fillText('耐热', currentRightX, polymeraseY3 - 10);
+                this.ctx.fillText('DNA聚合酶', currentRightX, polymeraseY3 + 10);
                 
                 // 第4个DNA聚合酶 - 在第4条链边移动
                 const gradient4 = this.ctx.createRadialGradient(
@@ -697,7 +700,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 this.ctx.font = 'bold 16px Arial';
                 this.ctx.fillStyle = 'black';
-                this.ctx.fillText('DNA聚合酶', currentRightX, polymeraseY4);
+                this.ctx.fillText('耐热', currentRightX, polymeraseY4 - 10);
+                this.ctx.fillText('DNA聚合酶', currentRightX, polymeraseY4 + 10);
             }
         };
         

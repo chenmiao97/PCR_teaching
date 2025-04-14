@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 第2对双链标签
             // 上链标签 - 将5'标志移动到引物2位置左侧，3'标志移动到引物1位置右侧
-            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair2TopY + this.baseHeight);
+            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair2TopY + this.baseHeight - 5);
             this.ctx.fillText("3'", (primer1EndPos + 0.5) * this.baseWidth, pair2TopY - 15);
             // 下链标签 - 将5'标志移动到引物1位置右侧
             this.ctx.fillText("3'", this.baseWidth/2, pair2BottomY + this.baseHeight + 15);
@@ -516,15 +516,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 第3对双链标签
             // 上链标签 - 将5'标志移动到引物2位置左侧
-            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3TopY + this.baseHeight);
+            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3TopY + this.baseHeight - 5);
             this.ctx.fillText("3'", (numBases - 0.5) * this.baseWidth, pair3TopY - 15);
             // 下链标签 - 将3'标志移动到引物2位置左侧，5'标志移动到引物1位置右侧
-            this.ctx.fillText("3'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3BottomY + this.baseHeight + 15);
+            this.ctx.fillText("3'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3BottomY + this.baseHeight - 5);
             this.ctx.fillText("5'", (primer1EndPos + 0.5) * this.baseWidth, pair3BottomY + this.baseHeight + 15);
             
             // 第4对双链标签
             // 上链标签 - 将5'标志移动到引物2位置左侧
-            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair4TopY + this.baseHeight);
+            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair4TopY + this.baseHeight - 5);
             this.ctx.fillText("3'", (numBases - 0.5) * this.baseWidth, pair4TopY - 15);
             // 下链标签
             this.ctx.fillText("3'", this.baseWidth/2, pair4BottomY + this.baseHeight + 15);
@@ -896,18 +896,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.ctx.setLineDash([]);
                 }
                 
+                // 绘制DNA聚合酶 - 在引物1位置处的橙色圆形
+                if (this.isExtending && false) { // 添加false条件，使此代码块不执行
+                    // 计算当前位置 - 随着延伸进度向左移动
+                    const polymeraseX = extensionStartX1 - (currentBasesToShow1 * this.baseWidth) + this.baseWidth/2;
+                    const polymeraseY = newChainY1; // 在新链上方一点位置
+                    
+                    // 绘制橙色圆形代表DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymeraseX, polymeraseY, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF4500'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 可选：添加字母"P"表示聚合酶
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 8px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("DNA 聚合酶", polymeraseX, polymeraseY);
+                    
+                    console.log("绘制DNA聚合酶，位置:", polymeraseX, polymeraseY);
+                }
+                
                 // 绘制第2条链的延伸
                 for (let i = 0; i < currentBasesToShow2; i++) {
                     // 计算当前碱基的X坐标，从左向右延伸
                     const baseX = extensionStartX2 + (i + 1) * this.baseWidth;
                     
-                    // 获取对应的模板链碱基
-                    const templateBase = this.dnaSequence[effectivePrimer2Pos + window.primer2.length + i].topBase;
-                    // 获取互补碱基
+                    // 获取对应的模板链碱基 - 使用第2条链自身作为模板
+                    const templateIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    // 注意：第2条链是下链，应该使用bottomBase
+                    const templateBase = this.basePairs[this.dnaSequence[templateIndex].topBase];
+                    // 获取互补碱基 - 新链的碱基应该与模板链互补
                     const complementaryBase = this.basePairs[templateBase];
                     
                     // 获取模板链碱基的颜色
-                    const templateBaseIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    const templateBaseIndex = templateIndex;
                     const baseColor = this.getBaseColorByIndex ? 
                         this.getBaseColorByIndex(templateBaseIndex) : '#00c2b4';
                     
@@ -920,7 +947,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.ctx.lineWidth = 1;
                     this.ctx.strokeRect(baseX, newChainY2, this.baseWidth, this.baseHeight);
                     
-                    // 绘制碱基字母
+                    // 绘制碱基字母 - 显示互补碱基
                     this.ctx.fillStyle = 'white';
                     this.ctx.font = '14px Arial';
                     this.ctx.textAlign = 'center';
@@ -957,13 +984,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 计算当前碱基的X坐标，从左向右延伸
                     const baseX = extensionStartX3 + (i + 1) * this.baseWidth;
                     
-                    // 获取对应的模板链碱基
-                    const templateBase = this.dnaSequence[effectivePrimer2Pos + window.primer2.length + i].topBase;
-                    // 获取互补碱基
+                    // 获取对应的模板链碱基 - 使用第8条链自身作为模板
+                    const templateIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    // 注意：第8条链是下链，应该使用bottomBase
+                    const templateBase = this.basePairs[this.dnaSequence[templateIndex].topBase];
+                    // 获取互补碱基 - 新链的碱基应该与模板链互补
                     const complementaryBase = this.basePairs[templateBase];
                     
                     // 获取模板链碱基的颜色
-                    const templateBaseIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    const templateBaseIndex = templateIndex;
                     const baseColor = this.getBaseColorByIndex ? 
                         this.getBaseColorByIndex(templateBaseIndex) : '#00c2b4';
                     
@@ -976,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.ctx.lineWidth = 1;
                     this.ctx.strokeRect(baseX, newChainY3, this.baseWidth, this.baseHeight);
                     
-                    // 绘制碱基字母
+                    // 绘制碱基字母 - 显示互补碱基
                     this.ctx.fillStyle = 'white';
                     this.ctx.font = '14px Arial';
                     this.ctx.textAlign = 'center';
@@ -1139,13 +1168,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 计算当前碱基的X坐标，从左向右延伸
                     const baseX = extensionStartX6 + (i + 1) * this.baseWidth;
                     
-                    // 获取对应的模板链碱基
-                    const templateBase = this.dnaSequence[effectivePrimer2Pos + window.primer2.length + i].topBase;
-                    // 获取互补碱基
+                    // 获取对应的模板链碱基 - 使用第6条链自身作为模板
+                    const templateIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    // 注意：第6条链是下链，应该使用bottomBase
+                    const templateBase = this.basePairs[this.dnaSequence[templateIndex].topBase];
+                    // 获取互补碱基 - 新链的碱基应该与模板链互补
                     const complementaryBase = this.basePairs[templateBase];
                     
                     // 获取模板链碱基的颜色
-                    const templateBaseIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    const templateBaseIndex = templateIndex;
                     const baseColor = this.getBaseColorByIndex ? 
                         this.getBaseColorByIndex(templateBaseIndex) : '#00c2b4';
                     
@@ -1158,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.ctx.lineWidth = 1;
                     this.ctx.strokeRect(baseX, newChainY6, this.baseWidth, this.baseHeight);
                     
-                    // 绘制碱基字母
+                    // 绘制碱基字母 - 显示互补碱基
                     this.ctx.fillStyle = 'white';
                     this.ctx.font = '14px Arial';
                     this.ctx.textAlign = 'center';
@@ -1251,13 +1282,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     // 计算当前碱基的X坐标，从左向右延伸
                     const baseX = extensionStartX5 + (i + 1) * this.baseWidth;
                     
-                    // 获取对应的模板链碱基
-                    const templateBase = this.dnaSequence[effectivePrimer2Pos + window.primer2.length + i].topBase;
-                    // 获取互补碱基
+                    // 获取对应的模板链碱基 - 使用第4条链自身作为模板
+                    const templateIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    // 注意：第4条链是下链，应该使用bottomBase
+                    const templateBase = this.basePairs[this.dnaSequence[templateIndex].topBase];
+                    // 获取互补碱基 - 新链的碱基应该与模板链互补
                     const complementaryBase = this.basePairs[templateBase];
                     
                     // 获取模板链碱基的颜色
-                    const templateBaseIndex = effectivePrimer2Pos + window.primer2.length + i;
+                    const templateBaseIndex = templateIndex;
                     const baseColor = this.getBaseColorByIndex ? 
                         this.getBaseColorByIndex(templateBaseIndex) : '#00c2b4';
                     
@@ -1270,7 +1303,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.ctx.lineWidth = 1;
                     this.ctx.strokeRect(baseX, newChainY5, this.baseWidth, this.baseHeight);
                     
-                    // 绘制碱基字母
+                    // 绘制碱基字母 - 显示互补碱基
                     this.ctx.fillStyle = 'white';
                     this.ctx.font = '14px Arial';
                     this.ctx.textAlign = 'center';
@@ -1632,15 +1665,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 第3对双链标签
             // 上链标签 - 将5'标志移动到引物2位置左侧
-            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3TopY + this.baseHeight);
+            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3TopY + this.baseHeight - 5);
             this.ctx.fillText("3'", (numBases - 0.5) * this.baseWidth, pair3TopY - 15);
             // 下链标签 - 将3'标志移动到引物2位置左侧，5'标志移动到引物1位置右侧
-            this.ctx.fillText("3'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3BottomY + this.baseHeight + 15);
+            this.ctx.fillText("3'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair3BottomY + this.baseHeight - 5);
             this.ctx.fillText("5'", (primer1EndPos + 0.5) * this.baseWidth, pair3BottomY + this.baseHeight + 15);
             
             // 第4对双链标签
             // 上链标签 - 将5'标志移动到引物2位置左侧
-            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair4TopY + this.baseHeight);
+            this.ctx.fillText("5'", (effectivePrimer2Pos - 0.5) * this.baseWidth, pair4TopY + this.baseHeight - 5);
             this.ctx.fillText("3'", (numBases - 0.5) * this.baseWidth, pair4TopY - 15);
             // 下链标签
             this.ctx.fillText("3'", this.baseWidth/2, pair4BottomY + this.baseHeight + 15);
@@ -1649,6 +1682,262 @@ document.addEventListener('DOMContentLoaded', function() {
             // 恢复原始的drawBase方法和碱基高度
             this.drawBase = originalDrawBase;
             this.baseHeight = originalBaseHeight;
+            
+            // 在最上层绘制DNA聚合酶 - 确保显示在所有其他元素之上
+            if (this.isExtending) {
+                // 计算第1条链延伸的相关参数
+                const extensionStartX1 = effectivePrimer1Pos * this.baseWidth;
+                const newChainY1 = pair1TopY + this.baseHeight + 10;
+                const extensionLength1 = effectivePrimer1Pos + 1;
+                const currentBasesToShow1 = Math.floor(extensionLength1 * this.extensionProgress);
+                
+                // 计算当前位置 - 随着延伸进度向左移动
+                const polymeraseX = extensionStartX1 - (currentBasesToShow1 * this.baseWidth) + this.baseWidth/2;
+                const polymeraseY = newChainY1 - 25;
+                
+                // 绘制橙色圆形代表DNA聚合酶
+                this.ctx.beginPath();
+                this.ctx.arc(polymeraseX, polymeraseY, 24, 0, Math.PI * 2);
+                this.ctx.fillStyle = '#FF8C00'; // 橙色
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                
+                // 添加字母"DNA 聚合酶"
+                this.ctx.fillStyle = 'black';
+                this.ctx.font = 'bold 9px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText("耐热", polymeraseX, polymeraseY - 5);
+                this.ctx.fillText("DNA聚合酶", polymeraseX, polymeraseY + 5);
+                
+                console.log("绘制DNA聚合酶，位置:", polymeraseX, polymeraseY);
+                
+                // 为第3条链添加DNA聚合酶
+                if (this.isExtending) {
+                    // 计算第3条链延伸的相关参数
+                    const extensionStartX4 = effectivePrimer1Pos * this.baseWidth;
+                    const newChainY4 = pair2TopY + this.baseHeight + 10;
+                    const extensionLength4 = effectivePrimer1Pos - effectivePrimer2Pos + 1;
+                    const currentBasesToShow4 = Math.floor(extensionLength4 * this.extensionProgress);
+                    
+                    // 计算第3条链DNA聚合酶的当前位置 - 随着延伸进度向左移动
+                    const polymerase3X = extensionStartX4 - (currentBasesToShow4 * this.baseWidth) + this.baseWidth/2;
+                    const polymerase3Y = newChainY4 - 25;
+                    
+                    // 绘制橙色圆形代表第3条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase3X, polymerase3Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase3X, polymerase3Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase3X, polymerase3Y + 5);
+                    
+                    console.log("绘制第3条链DNA聚合酶，位置:", polymerase3X, polymerase3Y);
+                }
+                
+                // 为第5条链添加DNA聚合酶
+                if (this.isExtending) {
+                    // 计算第5条链延伸的相关参数
+                    const chain5ExtensionStartX = effectivePrimer1Pos * this.baseWidth;
+                    const chain5NewY = pair3TopY + this.baseHeight + 10;
+                    const chain5ExtensionLength = effectivePrimer1Pos - effectivePrimer2Pos + 1;
+                    const chain5CurrentBasesToShow = Math.floor(chain5ExtensionLength * this.extensionProgress);
+                    
+                    // 计算第5条链DNA聚合酶的当前位置 - 随着延伸进度向左移动
+                    const polymerase5X = chain5ExtensionStartX - (chain5CurrentBasesToShow * this.baseWidth) + this.baseWidth/2;
+                    const polymerase5Y = chain5NewY - 25;
+                    
+                    // 绘制橙色圆形代表第5条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase5X, polymerase5Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase5X, polymerase5Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase5X, polymerase5Y + 5);
+                    
+                    console.log("绘制第5条链DNA聚合酶，位置:", polymerase5X, polymerase5Y);
+                }
+                
+                // 为第7条链添加DNA聚合酶
+                if (this.isExtending) {
+                    // 计算第7条链延伸的相关参数
+                    const extensionStartX7 = effectivePrimer1Pos * this.baseWidth;
+                    const newChainY7 = pair4TopY + this.baseHeight + 10;
+                    const extensionLength7 = effectivePrimer1Pos - effectivePrimer2Pos + 1;
+                    const currentBasesToShow7 = Math.floor(extensionLength7 * this.extensionProgress);
+                    
+                    // 计算第7条链DNA聚合酶的当前位置 - 随着延伸进度向左移动
+                    const polymerase7X = extensionStartX7 - (currentBasesToShow7 * this.baseWidth) + this.baseWidth/2;
+                    const polymerase7Y = newChainY7 - 25;
+                    
+                    // 绘制橙色圆形代表第7条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase7X, polymerase7Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase7X, polymerase7Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase7X, polymerase7Y + 5);
+                    
+                    console.log("绘制第7条链DNA聚合酶，位置:", polymerase7X, polymerase7Y);
+                }
+                
+                // 为第2条链添加DNA聚合酶 - 从引物2位置开始向右移动
+                if (this.isExtending) {
+                    // 计算第2条链延伸的相关参数
+                    const extensionStartX2 = (effectivePrimer2Pos + window.primer2.length - 1) * this.baseWidth;
+                    const newChainY2 = pair1BottomY - this.baseHeight - 10;
+                    const extensionLength2 = primer1EndPos - (effectivePrimer2Pos + window.primer2.length - 1);
+                    const currentBasesToShow2 = Math.floor(extensionLength2 * this.extensionProgress);
+                    
+                    // 计算第2条链DNA聚合酶的当前位置 - 随着延伸进度向右移动
+                    const polymerase2X = extensionStartX2 + (currentBasesToShow2 * this.baseWidth) - this.baseWidth/2 + 70;
+                    const polymerase2Y = newChainY2 + 35;
+                    
+                    // 绘制橙色圆形代表第2条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase2X, polymerase2Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase2X, polymerase2Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase2X, polymerase2Y + 5);
+                    
+                    console.log("绘制第2条链DNA聚合酶，位置:", polymerase2X, polymerase2Y);
+                }
+                
+                // 为第4条链添加DNA聚合酶 - 从引物2位置开始向右移动
+                if (this.isExtending) {
+                    // 计算第4条链延伸的相关参数
+                    const extensionStartX5 = (effectivePrimer2Pos + window.primer2.length - 1) * this.baseWidth;
+                    const newChainY5 = pair2BottomY - this.baseHeight - 10;
+                    const extensionLength5 = primer1EndPos - (effectivePrimer2Pos + window.primer2.length - 1);
+                    const currentBasesToShow5 = Math.floor(extensionLength5 * this.extensionProgress);
+                    
+                    // 计算第4条链DNA聚合酶的当前位置 - 随着延伸进度向右移动
+                    const polymerase4X = extensionStartX5 + (currentBasesToShow5 * this.baseWidth) - this.baseWidth/2 + 70;
+                    const polymerase4Y = newChainY5 + 35;
+                    
+                    // 绘制橙色圆形代表第4条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase4X, polymerase4Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase4X, polymerase4Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase4X, polymerase4Y + 5);
+                    
+                    console.log("绘制第4条链DNA聚合酶，位置:", polymerase4X, polymerase4Y);
+                }
+                
+                // 为第6条链添加DNA聚合酶 - 从引物2位置开始向右移动
+                if (this.isExtending) {
+                    // 计算第6条链延伸的相关参数
+                    const extensionStartX6 = (effectivePrimer2Pos + window.primer2.length - 1) * this.baseWidth;
+                    const newChainY6 = pair3BottomY - this.baseHeight - 10;
+                    const extensionLength6 = primer1EndPos - (effectivePrimer2Pos + window.primer2.length - 1);
+                    const currentBasesToShow6 = Math.floor(extensionLength6 * this.extensionProgress);
+                    
+                    // 计算第6条链DNA聚合酶的当前位置 - 随着延伸进度向右移动
+                    const polymerase6X = extensionStartX6 + (currentBasesToShow6 * this.baseWidth) - this.baseWidth/2 + 70;
+                    const polymerase6Y = newChainY6 + 35;
+                    
+                    // 绘制橙色圆形代表第6条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase6X, polymerase6Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase6X, polymerase6Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase6X, polymerase6Y + 5);
+                    
+                    console.log("绘制第6条链DNA聚合酶，位置:", polymerase6X, polymerase6Y);
+                }
+                
+                // 为第8条链添加DNA聚合酶 - 从引物2位置开始向右移动
+                if (this.isExtending) {
+                    // 计算第8条链延伸的相关参数
+                    const extensionStartX3 = (effectivePrimer2Pos + window.primer2.length - 1) * this.baseWidth;
+                    const newChainY3 = pair4BottomY - this.baseHeight - 10;
+                    const extensionLength3 = numBases - (effectivePrimer2Pos + window.primer2.length);
+                    const currentBasesToShow3 = Math.floor(extensionLength3 * this.extensionProgress);
+                    
+                    // 计算第8条链DNA聚合酶的当前位置 - 随着延伸进度向右移动
+                    const polymerase8X = extensionStartX3 + (currentBasesToShow3 * this.baseWidth) - this.baseWidth/2 + 70;
+                    const polymerase8Y = newChainY3 + 35;
+                    
+                    // 绘制橙色圆形代表第8条链的DNA聚合酶
+                    this.ctx.beginPath();
+                    this.ctx.arc(polymerase8X, polymerase8Y, 24, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#FF8C00'; // 橙色
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#FF8C00'; // 深橙色边框
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                    
+                    // 添加字母"DNA 聚合酶"
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.font = 'bold 9px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText("耐热", polymerase8X, polymerase8Y - 5);
+                    this.ctx.fillText("DNA聚合酶", polymerase8X, polymerase8Y + 5);
+                    
+                    console.log("绘制第8条链DNA聚合酶，位置:", polymerase8X, polymerase8Y);
+                }
+            }
         };
         
         // 设置变性状态

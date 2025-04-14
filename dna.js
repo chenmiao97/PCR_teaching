@@ -561,7 +561,8 @@ class DNA {
             this.ctx.font = 'bold 16px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText("DNA聚合酶", this.polymerase1X + this.baseWidth/2, polymerase1Y);
+            this.ctx.fillText("耐热", this.polymerase1X + this.baseWidth/2, polymerase1Y - 10);
+            this.ctx.fillText("DNA聚合酶", this.polymerase1X + this.baseWidth/2, polymerase1Y + 10);
             
             // 聚合酶2（下方）
             this.ctx.fillStyle = 'rgba(255, 127, 0, 0.7)';
@@ -574,7 +575,8 @@ class DNA {
             this.ctx.font = 'bold 16px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText("DNA聚合酶", this.polymerase2X + this.baseWidth/2, polymerase2Y);
+            this.ctx.fillText("耐热", this.polymerase2X + this.baseWidth/2, polymerase2Y - 10);
+            this.ctx.fillText("DNA聚合酶", this.polymerase2X + this.baseWidth/2, polymerase2Y + 10);
         } else {
             // 绘制图像
             this.ctx.drawImage(this.polymeraseImg, this.polymerase1X, polymerase1Y - 10, 40, 40);
@@ -585,8 +587,10 @@ class DNA {
             this.ctx.font = 'bold 16px Arial';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle';
-            this.ctx.fillText("DNA聚合酶", this.polymerase1X + 20, polymerase1Y + 25);
-            this.ctx.fillText("DNA聚合酶", this.polymerase2X + 20, polymerase2Y + 25);
+            this.ctx.fillText("耐热", this.polymerase1X + 20, polymerase1Y + 15);
+            this.ctx.fillText("DNA聚合酶", this.polymerase1X + 20, polymerase1Y + 35);
+            this.ctx.fillText("耐热", this.polymerase2X + 20, polymerase2Y + 15);
+            this.ctx.fillText("DNA聚合酶", this.polymerase2X + 20, polymerase2Y + 35);
         }
     }
     
